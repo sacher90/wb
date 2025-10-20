@@ -52,7 +52,7 @@ def run_once(settings: Settings, metric_aliases: Dict[str, str]) -> None:
 
     client = AnalyticsClient(settings.wb_api_url, settings.wb_api_token)
     storage = FileStorage(settings.state_file)
-    telegram = TelegramNotifier(settings.telegram_bot_token, settings.telegram_chat_id)
+    telegram = TelegramNotifier(settings.telegram_bot_token, settings.telegram_chat_ids)
 
     fetched_at = datetime.utcnow()
     report = client.fetch_report()
