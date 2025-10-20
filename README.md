@@ -32,6 +32,7 @@
 | `WB_API_TOKEN`        | Токен Wildberries Analytics API.                                         |
 | `TELEGRAM_BOT_TOKEN`  | Токен Telegram-бота, отправляющего уведомления.                          |
 | `TELEGRAM_CHAT_ID`    | ID чата или пользователя для получения сообщений.                        |
+| `TELEGRAM_CHAT_IDS`   | (опционально) Список ID через запятую, если нужно отправлять в несколько чатов. |
 | `POLL_INTERVAL_SECONDS` | (опционально) Интервал между запросами в секундах. По умолчанию 3600. |
 | `WB_ANALYTICS_URL`    | (опционально) Пользовательский URL для API.                              |
 | `STATE_FILE`          | (опционально) Путь к файлу с последним отчётом.                          |
@@ -43,7 +44,7 @@
 ```bash
 WB_API_TOKEN=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 TELEGRAM_BOT_TOKEN=123456789:ABCDEF...
-TELEGRAM_CHAT_ID=123456789
+TELEGRAM_CHAT_IDS=123456789,987654321
 POLL_INTERVAL_SECONDS=3600
 ```
 

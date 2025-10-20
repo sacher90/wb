@@ -85,21 +85,27 @@ def render_message(
 ) -> str:
     if not changes:
         return (
-            "Обновление Wildberries на {fetched_at}. Изменений по выбранным метрикам нет.".format(
+            "📊 Обновление Wildberries от {fetched_at}\n"
+            "Никаких заметных изменений по выбранным товарам.".format(
                 fetched_at=fetched_at
             )
         )
 
-    parts = [f"Обновление Wildberries на {fetched_at}. Изменения:" ]
+    parts = [
+        f"📊 Обновление Wildberries от {fetched_at}",
+        "Что изменилось:",
+    ]
     for change in changes:
         if change.created:
-            parts.append(f"• Новый товар {change.item_id}")
+            parts.append(f"• Появился новый товар №{change.item_id}.")
             continue
         if change.removed:
-            parts.append(f"• Товар {change.item_id} больше не присутствует в отчете")
+            parts.append(
+                f"• Товар №{change.item_id} больше не отображается в отчёте."
+            )
             continue
         assert change.metrics is not None
-        parts.append(f"• Товар {change.item_id}:")
+        parts.append(f"• Артикул №{change.item_id}:")
         for metric_change in change.metrics:
             metric_name = (
                 metrics_display.get(metric_change.metric, metric_change.metric)
@@ -110,7 +116,7 @@ def render_message(
             current = _format_optional(metric_change.current)
             delta = _format_optional(metric_change.delta, signed=True)
             parts.append(
-                f"    - {metric_name}: {current} (было {previous}, изменение {delta})"
+                f"   — {metric_name}: стало {current}, было {previous} (разница {delta})"
             )
 
     return "\n".join(parts)

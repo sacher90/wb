@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 import os
 
 
@@ -13,10 +13,10 @@ class Settings:
 
     wb_api_token: str
     telegram_bot_token: str
-    telegram_chat_id: str
+    telegram_chat_ids: Tuple[str, ...]
     interval_seconds: int = 3600
     wb_api_url: str = (
-        "https://statistics-api.wildberries.ru/api/v1/supplier/analytics"  # default Analytics API
+        "https://seller-analytics-api.wildberries.ru/api/v2/nm-report/grouped/history"
     )
     state_file: Path = Path("state/latest_report.json")
     tracked_metrics: List[str] = field(
@@ -30,12 +30,12 @@ class Settings:
 
         wb_api_token = _require_env("WB_API_TOKEN")
         telegram_bot_token = _require_env("TELEGRAM_BOT_TOKEN")
-        telegram_chat_id = _require_env("TELEGRAM_CHAT_ID")
+        telegram_chat_ids = _resolve_chat_ids()
 
         interval_seconds = int(os.getenv("POLL_INTERVAL_SECONDS", "3600"))
         wb_api_url = os.getenv(
             "WB_ANALYTICS_URL",
-            "https://statistics-api.wildberries.ru/api/v1/supplier/analytics",
+            "https://seller-analytics-api.wildberries.ru/api/v2/nm-report/grouped/history",
         )
         state_file = Path(os.getenv("STATE_FILE", "state/latest_report.json"))
         tracked_metrics = _split_env_list(
@@ -46,7 +46,7 @@ class Settings:
         return cls(
             wb_api_token=wb_api_token,
             telegram_bot_token=telegram_bot_token,
-            telegram_chat_id=telegram_chat_id,
+            telegram_chat_ids=telegram_chat_ids,
             interval_seconds=interval_seconds,
             wb_api_url=wb_api_url,
             state_file=state_file,
@@ -66,6 +66,17 @@ def _split_env_list(raw: str | None) -> List[str]:
     if not raw:
         return []
     return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def _resolve_chat_ids() -> Tuple[str, ...]:
+    multi_chat_env = os.getenv("TELEGRAM_CHAT_IDS")
+    if multi_chat_env:
+        chat_ids = _split_env_list(multi_chat_env)
+        if chat_ids:
+            return tuple(chat_ids)
+
+    single_chat_id = _require_env("TELEGRAM_CHAT_ID")
+    return (single_chat_id,)
 
 
 __all__ = ["Settings"]
